@@ -170,20 +170,21 @@ const earthG=new T.Group();earthG.position.copy(EC);spaceG.add(earthG);[earth,at
 {const NW=700,wp0=new Float32Array(NW*6),wr=new Float32Array(NW*6),we=new Float32Array(NW*2);for(let i=0;i<NW;i++){const a=Math.random(),b=Math.random(),c=Math.random();for(let q=0;q<2;q++){const j=i*2+q;wr.set([a,b,c],j*3);we[j]=q}}
  const wg=new T.BufferGeometry();wg.setAttribute('position',new T.BufferAttribute(wp0,3));wg.setAttribute('r',new T.BufferAttribute(wr,3));wg.setAttribute('e',new T.BufferAttribute(we,1));
  var warp=new T.LineSegments(wg,new T.ShaderMaterial({transparent:true,depthWrite:false,blending:T.AdditiveBlending,uniforms:{t:{value:0},sp:{value:0}},vertexShader:'attribute vec3 r;attribute float e;uniform float t,sp;varying float vA;void main(){float ang=r.x*6.283;float rad=5.+r.y*r.y*70.;vec2 xy=vec2(cos(ang),sin(ang))*rad;float z=mod(r.z*800.+t*sp*260.,800.)-760.;float len=sp*sp*80.+2.;vec3 p=vec3(xy,z+e*len);vec4 mv=modelViewMatrix*vec4(p,1.);vA=sp*(.2+.8*r.y)*(.3+.7*e);gl_Position=projectionMatrix*mv;}',fragmentShader:'varying float vA;void main(){gl_FragColor=linearToOutputTexel(vec4(.75,.85,1.,vA));}'}));warp.frustumCulled=false;warp.visible=false;spaceG.add(warp)}
-let dep=0,ft=0,burned=false,burnT=0,warpSp=0,cvT=0,fovx=0,spaceT=0,burnWin=false,cruiseSaid=false;
+let md=0,dep=0,ft=0,burned=false,burnT=0,warpSp=0,cvT=0,fovx=0,spaceT=0,burnWin=false,cruiseSaid=false;
 const MP0=[-253,110,-1011];
-function moonAt(f){if(f<19){const u=f/19,e=u*u*(3-2*u)*.4+u*.6;return[MP0[0]+(-64-MP0[0])*e,MP0[1]+(-4-MP0[1])*e,MP0[2]+(-34-MP0[2])*e]}const d=f-19;return[-64-2.2*d,-4-.8*d,-34+22*d+5*d*d]}
-function earthAt(f){if(f<18.6){const a=Math.min(f,9);return[EC.x-.4*a*a,EC.y-.5*a,EC.z+5*a+.6*a*a,1-ss(5,9,f)]}const d=Math.max(0,f-26);return[8,-160+174*ss(19,25,f)-6*d,-270,2.6*(1-.9*ss(26,34,f))]}
+const TA=24;
+function moonAt(f,md){if(f<TA){const u=f/TA,e=1-Math.pow(1-u,2.4);return[MP0[0]+(-64-MP0[0])*e,MP0[1]+(-4-MP0[1])*e,MP0[2]+(-34-MP0[2])*e]}return[-64-1.4*md,-4-.5*md,-34+4.5*md+3*md*md]}
+function earthAt(f,bt){if(f<TA-5){const a=Math.min(f,9);return[EC.x-.4*a*a,EC.y-.5*a,EC.z+5*a+.6*a*a,1-ss(5,9,f)]}return[8,-160+174*ss(TA-4,TA+6,f),-270,2.6*(bt>=0?1-.9*ss(6,14,bt):1)]}
 function depart(){if(dep||room!=='space')return;dep=1;ft=0;burned=false;sfx(60,300,3,'sawtooth',.1);swell(40,200,4,.2);cb.depart&&cb.depart()}
-function fireBurn(sc,auto){burned=true;burnT=ft;const score=sc!==undefined?sc:Math.max(0,1-Math.abs(ft-19.5)/5);cvT=.35+.65*score;chg=0;bump(.6);flashK=.3;sfx(60,500,2.5,'sawtooth',.2);swell(80,1200,3,.35);
+function fireBurn(sc,auto){burned=true;burnT=ft;const score=sc!==undefined?sc:Math.max(0,1-Math.abs(ft-(TA+2))/6);cvT=.35+.65*score;chg=0;bump(.6);flashK=.3;sfx(60,500,2.5,'sawtooth',.2);swell(80,1200,3,.35);
  go(.5,e=>ign=e,E.lin,()=>setTimeout(()=>go(2.5,e=>ign=1-e,E.lin),2800));cb.burn&&cb.burn(score,!!auto)}
 function flight(dt,K){spaceT+=dt;if(!dep&&spaceT>75)depart();
- if(!dep){moon2.position.set(MP0[0]*K,MP0[1]*K,MP0[2]*K);moon2.scale.setScalar(60*K);earthG.position.copy(EC);earthG.scale.setScalar(1);earthG.visible=true;warpSp=0;fovx=0;burnWin=false;warp.visible=false;return}
- ft+=dt;const m=moonAt(ft);moon2.position.set(m[0]*K,m[1]*K,m[2]*K);moon2.scale.setScalar(60*K);
- const e=earthAt(ft);earthG.position.set(e[0],e[1],e[2]);earthG.scale.setScalar(Math.max(.001,e[3]));earthG.visible=e[3]>.01;
- burnWin=!burned&&ft>12&&ft<24;if(!burned&&ft>=24)fireBurn(.15,true);
- const tgt=burned?cvT:.1*ss(0,12,ft);warpSp+=(tgt-warpSp)*Math.min(1,dt*(burned?1.2:2));
- fovx=10*ss(6,19,ft)+(burned?18*warpSp:0);
+ if(!dep){moon2.position.set(MP0[0]*K,MP0[1]*K,MP0[2]*K);moon2.scale.setScalar(60*K);earthG.position.copy(EC);earthG.scale.setScalar(1);earthG.visible=true;warpSp=0;fovx=0;burnWin=false;md=0;warp.visible=false;return}
+ ft+=dt;if(ft>=TA)md+=dt*(burned?.15+ss(0,6,ft-burnT)*5.2:.15);const m=moonAt(ft,md);moon2.position.set(m[0]*K,m[1]*K,m[2]*K);moon2.scale.setScalar(60*K);
+ const e=earthAt(ft,burned?ft-burnT:-1);earthG.position.set(e[0],e[1],e[2]);earthG.scale.setScalar(Math.max(.001,e[3]));earthG.visible=e[3]>.01;
+ burnWin=!burned&&ft>14&&ft<36;if(!burned&&ft>=36)fireBurn(.15,true);
+ const tgt=burned?cvT:.08*ss(0,10,ft)*(1-ss(16,TA,ft));warpSp+=(tgt-warpSp)*Math.min(1,dt*(burned?1.2:2));
+ fovx=10*ss(8,TA,ft)+(burned?18*warpSp:0);
  warp.material.uniforms.t.value=skyU.t.value;warp.material.uniforms.sp.value=warpSp;warp.visible=warpSp>.02;
  if(burned)flareP=Math.max(flareP,warpSp*.7);
  if(burned&&!cruiseSaid&&ft-burnT>14){cruiseSaid=true;cb.cruise&&cb.cruise()}}
@@ -295,7 +296,7 @@ function frame(){
  if(((sk&&dkS>=.9)||(sp&&burnWin))&&held&&!busy&&litK>.5)chg=Math.min(1,chg+dt/(sk?2.6:1.1));else chg=Math.max(0,chg-dt*1.5);
  fovS.t=-chg*7+(rise>0?7*Math.min(1,rise/75):0)+fovx;
  if(chg>0){shake=Math.max(shake,reduce?0:.02+chg*.08);if(Math.random()<dt*6)sfx(180+chg*900,200+chg*1100,.25,'sine',.04+chg*.08)}
- if(chg>=1&&!busy){if(sk)ascend();else if(sp&&burnWin)fireBurn()}{const hv=((sk&&dkS>=.9)||(sp&&burnWin))&&!busy&&chg<.05?1:0,ht=sp?'Hold to burn':'Press and hold the button';if(hintEl.textContent!==ht)hintEl.textContent=ht;if(hv!==fHint){fHint=hv;hintEl.style.opacity=hv}}
+ if(chg>=1&&!busy){if(sk)ascend();else if(sp&&burnWin)fireBurn()}{const hv=((sk&&dkS>=.9)||(sp&&burnWin))&&!busy&&chg<.05?1:0,ht=sp?(burnWin&&ft>23.6&&ft<25.6?'Now':'Hold to burn'):'Press and hold the button';if(hintEl.textContent!==ht)hintEl.textContent=ht;if(hv!==fHint){fHint=hv;hintEl.style.opacity=hv}}
  if(sk){const mo=Math.max(0,Math.min(1,(dnS-.4)/.3))*skyK,mr=150*Math.tan(.06);
   skyU.md.value.set(-.13,-.05+dnS*.22,-.75).normalize();skyU.mo.value=mo;
   if(flockT<0&&dk<.75&&skyK>.9&&(birdTimer-=dt)<0){flockT=0;birdTimer=18+Math.random()*20}
@@ -314,7 +315,7 @@ function stick(back){if(busy){setTimeout(()=>stick(back),400);return}
  const P=[[-hw+.15,cy,0,1,0,0],[hw-.15,cy,0,-1,0,0],[(Math.random()-.5)*hw,cy+hh*.8,0,0,-1,0]],pose=back?[0,0,0,0,1,0]:P[(Math.random()*3)|0];
  busy=true;const p0=anchor.position.clone(),q0=anchor.quaternion.clone(),q1=new T.Quaternion().setFromUnitVectors(new T.Vector3(0,1,0),new T.Vector3(pose[3],pose[4],pose[5])),lx=btnG.position.x,lz=btnG.position.z,arc=1.5+Math.hypot(pose[0]-p0.x,pose[1]-p0.y)*.22;sq.x=.25;sfx(180,520,.25,'sine',.1);
  setTimeout(()=>go(.9,(e,k)=>{anchor.position.set(p0.x+(pose[0]-p0.x)*e,p0.y+(pose[1]-p0.y)*e+Math.sin(Math.PI*k)*arc,p0.z+(pose[2]-p0.z)*e);anchor.quaternion.copy(q0).slerp(q1,e);btnG.position.x=lx*(1-e);btnG.position.z=lz*(1-e)},E.sine,()=>{busy=false;sq.v=7;ripple();bump(.1);sfx(110,50,.15,'triangle',.3);emit(bw,16,1.8,SPARK)}),120)}
-function setRoom(n){room=n;anchor.position.set(0,0,0);anchor.quaternion.identity();snapCam=true;alt=0;readyFired=false;const sk=n==='sky',sp=n==='space',st=n==='stage';floor.visible=st;coneG.visible=st;motes.visible=st;sky.visible=sk;if(sk)buildLand();spaceG.visible=sp;stars.visible=sp;bugs.visible=fireflies.visible=sk;moon2.visible=sp;moon.visible=false;moonGlow.visible=false;if(sp){dep=0;ft=0;burned=false;burnWin=false;warpSp=0;spaceT=0;cruiseSaid=false;fovx=0}doorG.visible=st&&doorB>0;if(!st)spotK=0;if(!sk){flockT=-1;planeT=-1;birds.forEach(b=>b.visible=false);[pl1,pl2,trail].forEach(o=>o.visible=false)}hemi.color.set(sk?0xff9a70:sp?0x6a8cff:0x3a4a66);hemi.groundColor.set(sk?0x2a1a2e:sp?0x05060a:0x000000)}
+function setRoom(n){room=n;anchor.position.set(0,0,0);anchor.quaternion.identity();snapCam=true;alt=0;readyFired=false;const sk=n==='sky',sp=n==='space',st=n==='stage';floor.visible=st;coneG.visible=st;motes.visible=st;sky.visible=sk;if(sk)buildLand();spaceG.visible=sp;stars.visible=sp;bugs.visible=fireflies.visible=sk;moon2.visible=sp;moon.visible=false;moonGlow.visible=false;if(sp){md=0;dep=0;ft=0;burned=false;burnWin=false;warpSp=0;spaceT=0;cruiseSaid=false;fovx=0}doorG.visible=st&&doorB>0;if(!st)spotK=0;if(!sk){flockT=-1;planeT=-1;birds.forEach(b=>b.visible=false);[pl1,pl2,trail].forEach(o=>o.visible=false)}hemi.color.set(sk?0xff9a70:sp?0x6a8cff:0x3a4a66);hemi.groundColor.set(sk?0x2a1a2e:sp?0x05060a:0x000000)}
 function ascend(){busy=true;chg=0;held=false;capS.t=0;anchor.position.set(0,0,0);anchor.quaternion.identity();btnG.position.x=btnG.position.z=0;
  sfx(55,28,2.2,'sawtooth',.25);swell(40,160,2.2,.4);
  go(1.2,e=>{ign=e;bump(.15+e*.35)},E.lin,()=>{
