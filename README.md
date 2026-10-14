@@ -4,24 +4,6 @@ A tiny universe behind one red button. Press it. See what happens.
 
 A single-page WebGL game (three.js) that installs like an app on Android and iPhone and works offline.
 
-## Publish it on GitHub Pages
-
-1. Create an **empty public repository named `trb`** on GitHub (no README, no licence, nothing).
-2. From this folder:
-
-   ```bash
-   git init
-   git add .
-   git commit -m "TRB: first release"
-   git branch -M main
-   git remote add origin https://github.com/nztdev/trb.git
-   git push -u origin main
-   ```
-
-3. On GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `(root)` → Save.**
-4. After a minute it is live at **https://nztdev.github.io/trb/**
-
-(If your GitHub username is not `nztdev`, replace it in the commands and in the URL.)
 
 ## Install it as an app
 
