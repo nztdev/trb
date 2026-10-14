@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx=".5" cy=".4" r=".75"><stop offset="0" stop-color="#1e252b"/><stop offset=".6" stop-color="#0a0d10"/><stop offset="1" stop-color="#030406"/></radialGradient>
+    <radialGradient id="hs" cx=".4" cy=".35" r=".9"><stop offset="0" stop-color="#60686f"/><stop offset=".55" stop-color="#343a40"/><stop offset="1" stop-color="#121518"/></radialGradient>
+    <radialGradient id="ch" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#ecf0f4"/><stop offset=".5" stop-color="#969ea6"/><stop offset="1" stop-color="#464c52"/></radialGradient>
+    <radialGradient id="cap" cx=".36" cy=".32" r=".85"><stop offset="0" stop-color="#ff6850"/><stop offset=".28" stop-color="#e4281c"/><stop offset=".7" stop-color="#b00c0a"/><stop offset="1" stop-color="#600406"/></radialGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="266" r="228" fill="#ff2814" opacity=".6" filter="url(#glow)"/>
+  <circle cx="256" cy="266" r="225" fill="url(#hs)" stroke="#969ea6" stroke-width="3"/>
+  <circle cx="256" cy="266" r="195" fill="none" stroke="#0e0e0e" stroke-width="29"/>
+  <circle cx="256" cy="266" r="195" fill="none" stroke="#ecb800" stroke-width="29" stroke-dasharray="19.1 19.1"/>
+  <circle cx="256" cy="266" r="157" fill="none" stroke="url(#ch)" stroke-width="35"/>
+  <circle cx="256" cy="266" r="135" fill="url(#cap)"/>
+  <ellipse cx="222" cy="214" rx="46" ry="33" fill="#fff" opacity=".6" filter="url(#soft)"/>
+  <ellipse cx="206" cy="206" rx="12" ry="8" fill="#fff" opacity=".9"/>
+</svg>
