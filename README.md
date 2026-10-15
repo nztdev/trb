@@ -4,6 +4,24 @@ A tiny universe behind one red button. Press it. See what happens.
 
 A single-page WebGL game (three.js) that installs like an app on Android and iPhone and works offline.
 
+## Publish it on GitHub Pages
+
+1. Create an **empty public repository named `trb`** on GitHub (no README, no licence, nothing).
+2. From this folder:
+
+   ```bash
+   git init
+   git add .
+   git commit -m "TRB: first release"
+   git branch -M main
+   git remote add origin https://github.com/nztdev/trb.git
+   git push -u origin main
+   ```
+
+3. On GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `(root)` → Save.**
+4. After a minute it is live at **https://nztdev.github.io/trb/**
+
+(If your GitHub username is not `nztdev`, replace it in the commands and in the URL.)
 
 ## Install it as an app
 
@@ -17,6 +35,13 @@ Good to know:
 - On iPhone, the installed app keeps its **own save data**, separate from Safari. Progress in Safari does not carry over.
 - Location is asked once, in-game, and stays on the device.
 - The first tap on the black screen starts the sound (phones block audio until you touch the screen).
+
+## Privacy
+
+- Location is asked **once, in the game**, by the button itself, around its sixth press.
+- It is stored **only on the device** (in the browser's local storage), rounded to about 11 km. Nothing is sent anywhere; the game has no server.
+- If you say no, or it is unavailable, the ending asks you to **tap where you live** on the globe instead.
+- To remove it: debug panel → **forget my location**, or clear the site's data in your browser.
 
 ## Shipping an update
 
@@ -48,4 +73,4 @@ Lighthouse → *Progressive Web App* gives a full report.
 ## Debug panel
 
 The small **debug** button (bottom right) shows frames per second, graphics card and game state, and has shortcuts:
-*reset world, jump: sky, sky: night, jump: space, depart now, to planets, toggle low quality, clear location*.
+*reset world, jump: sky, sky: night, jump: space, depart now, to planets, jump: galaxy, jump now, trip home, toggle low quality, forget my location*.

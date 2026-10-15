@@ -1,6 +1,6 @@
 /* TRB service worker: makes the game load instantly and work offline.
    Bump V whenever you deploy a new version so phones pick up the update. */
-const V = 'trb-v1';
+const V = 'trb-v3';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest',
   'vendor/three.min.js',
